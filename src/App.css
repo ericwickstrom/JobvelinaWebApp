@@ -1,42 +1,132 @@
-#root {
-  max-width: 1280px;
+.app {
+  max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.app-header {
+  margin-bottom: 3rem;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.app-header h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+  color: #646cff;
+  margin-bottom: 0.5rem;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
+.app-header p {
+  font-size: 1.2em;
   color: #888;
+  margin: 0;
+}
+
+.main-content {
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+.welcome-section {
+  background: #f9f9f9;
+  border-radius: 12px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+
+.welcome-section h2 {
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.welcome-section p {
+  color: #666;
+  font-size: 1.1em;
+}
+
+.job-form {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 2rem;
+  text-align: left;
+  max-width: 600px;
+  width: 100%;
+}
+
+.job-form h3 {
+  margin-top: 0;
+  color: #333;
+  text-align: center;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #555;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #646cff;
+  box-shadow: 0 0 0 2px rgba(100, 108, 255, 0.1);
+}
+
+.submit-btn {
+  background: #646cff;
+  color: white;
+  border: none;
+  padding: 0.75rem 2rem;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  width: 100%;
+  transition: background-color 0.2s;
+}
+
+.submit-btn:hover {
+  background: #5a5fcf;
+}
+
+.job-count {
+  text-align: center;
+  padding: 1rem;
+  background: #f0f8ff;
+  border-radius: 8px;
+  color: #333;
+  max-width: 600px;
+  width: 100%;
+}
+
+.job-count h4 {
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.job-count p {
+  color: #666;
+  margin: 0.5rem 0;
 }

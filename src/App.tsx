@@ -1,35 +1,47 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from 'react';
+import './App.css';
+import { JobForm } from './components/JobForm';
+import type { Job, NewJob } from './types/Job';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [jobs, setJobs] = useState<Job[]>([]);
+
+  const handleAddJob = (newJob: NewJob) => {
+    const job: Job = {
+      ...newJob,
+      id: crypto.randomUUID(), // Generate unique ID
+      status: 'applied',        // Default status
+      appliedDate: new Date(),  // Today's date
+    };
+
+    setJobs(prevJobs => [...prevJobs, job]);
+    console.log('New job added:', job); // For now, we'll log it
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div className="app">
+      <header className="app-header">
+        <h1>JobVelina 🐗</h1>
+        <p>Your job hunt companion</p>
+      </header>
+
+      <main className="main-content">
+        <JobForm onAddJob={handleAddJob} />
+
+        <div className="job-count">
+          <p>Total Applications: {jobs.length}</p>
+          {jobs.length > 0 && (
+            <div>
+              <h4>Recent Jobs:</h4>
+              {jobs.map(job => (
+                <p key={job.id}>{job.company} - {job.position}</p>
+              ))}
+            </div>
+          )}
+        </div>
+      </main>
+    </div>
+  );
 }
 
-export default App
+export default App;
