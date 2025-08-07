@@ -2,6 +2,7 @@ import { useState } from 'react';
 import './App.css';
 import { JobForm } from './components/JobForm';
 import type { Job, NewJob } from './types/Job';
+import { JobList } from './components/JobList';
 
 function App() {
   const [jobs, setJobs] = useState<Job[]>([]);
@@ -30,15 +31,9 @@ function App() {
 
         <div className="job-count">
           <p>Total Applications: {jobs.length}</p>
-          {jobs.length > 0 && (
-            <div>
-              <h4>Recent Jobs:</h4>
-              {jobs.map(job => (
-                <p key={job.id}>{job.company} - {job.position}</p>
-              ))}
-            </div>
-          )}
         </div>
+
+        <JobList jobs={jobs} />
       </main>
     </div>
   );
