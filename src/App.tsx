@@ -6,6 +6,7 @@ import { JobList } from './components/JobList';
 
 function App() {
   const [jobs, setJobs] = useState<Job[]>([]);
+  const [editingJobId, setEditingJobId] = useState<string | null>(null);
 
   const handleAddJob = (newJob: NewJob) => {
     const job: Job = {
@@ -17,6 +18,27 @@ function App() {
 
     setJobs(prevJobs => [...prevJobs, job]);
     console.log('New job added:', job); // For now, we'll log it
+  };
+
+  const handleDeleteJob = (jobId: string) => {
+    setJobs(prevJobs => prevJobs.filter(job => job.id !== jobId));
+  };
+
+  const handleEditJob = (jobId: string) => {
+    setEditingJobId(jobId);
+  };
+
+  const handleSaveJob = (updatedJob: Job) => {
+    setJobs(prevJobs =>
+      prevJobs.map(job =>
+        job.id === updatedJob.id ? updatedJob : job
+      )
+    );
+    setEditingJobId(null); // Exit edit mode
+  };
+
+  const handleCancelEdit = () => {
+    setEditingJobId(null);
   };
 
   return (
@@ -33,7 +55,14 @@ function App() {
           <p>Total Applications: {jobs.length}</p>
         </div>
 
-        <JobList jobs={jobs} />
+        <JobList 
+  jobs={jobs} 
+  onDeleteJob={handleDeleteJob}
+  editingJobId={editingJobId}
+  onEditJob={handleEditJob}
+  onSaveJob={handleSaveJob}
+  onCancelEdit={handleCancelEdit}
+/>
       </main>
     </div>
   );
