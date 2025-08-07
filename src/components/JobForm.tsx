@@ -1,5 +1,3 @@
-// src/components/JobForm.tsx
-
 import { useState } from 'react';
 import type { NewJob } from '../types/Job';
 
@@ -10,84 +8,103 @@ interface JobFormProps {
 export function JobForm({ onAddJob }: JobFormProps) {
   const [company, setCompany] = useState('');
   const [position, setPosition] = useState('');
-  const [notes, setNotes] = useState('');
   const [jobUrl, setJobUrl] = useState('');
+  const [notes, setNotes] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
+    // Basic validation
     if (!company.trim() || !position.trim()) {
-      alert('Company and position are required!');
       return;
     }
 
+    // Create new job object
     const newJob: NewJob = {
       company: company.trim(),
       position: position.trim(),
-      notes: notes.trim() || undefined,
       jobUrl: jobUrl.trim() || undefined,
+      notes: notes.trim() || undefined,
     };
 
+    // Call the parent callback
     onAddJob(newJob);
-    
-    // Clear form
+
+    // Reset form
     setCompany('');
     setPosition('');
-    setNotes('');
     setJobUrl('');
+    setNotes('');
   };
 
   return (
-    <form onSubmit={handleSubmit} className="job-form">
-      <h3>Add New Job Application</h3>
+    <div className="bg-white border border-gray-200 rounded-xl p-8 text-left w-full max-w-2xl shadow-sm">
+      <h3 className="text-xl font-semibold text-gray-800 text-center mb-6">
+        Add New Job Application
+      </h3>
       
-      <div className="form-group">
-        <label htmlFor="company">Company *</label>
-        <input
-          id="company"
-          type="text"
-          value={company}
-          onChange={(e) => setCompany(e.target.value)}
-          placeholder="e.g. Google, Microsoft, etc."
-        />
-      </div>
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div>
+          <label className="block text-sm font-semibold text-gray-600 mb-2">
+            Company *
+          </label>
+          <input
+            type="text"
+            value={company}
+            onChange={(e) => setCompany(e.target.value)}
+            placeholder="e.g. Google, Microsoft, etc."
+            className="w-full px-3 py-3 border border-gray-300 rounded-md text-base focus:outline-none focus:ring-2 focus:ring-jobvelina-blue focus:border-transparent transition-all"
+            required
+          />
+        </div>
 
-      <div className="form-group">
-        <label htmlFor="position">Position *</label>
-        <input
-          id="position"
-          type="text"
-          value={position}
-          onChange={(e) => setPosition(e.target.value)}
-          placeholder="e.g. Software Engineer, Product Manager, etc."
-        />
-      </div>
+        <div>
+          <label className="block text-sm font-semibold text-gray-600 mb-2">
+            Position *
+          </label>
+          <input
+            type="text"
+            value={position}
+            onChange={(e) => setPosition(e.target.value)}
+            placeholder="e.g. Software Engineer, Product Manager, etc."
+            className="w-full px-3 py-3 border border-gray-300 rounded-md text-base focus:outline-none focus:ring-2 focus:ring-jobvelina-blue focus:border-transparent transition-all"
+            required
+          />
+        </div>
 
-      <div className="form-group">
-        <label htmlFor="jobUrl">Job URL (optional)</label>
-        <input
-          id="jobUrl"
-          type="url"
-          value={jobUrl}
-          onChange={(e) => setJobUrl(e.target.value)}
-          placeholder="https://..."
-        />
-      </div>
+        <div>
+          <label className="block text-sm font-semibold text-gray-600 mb-2">
+            Job URL (optional)
+          </label>
+          <input
+            type="url"
+            value={jobUrl}
+            onChange={(e) => setJobUrl(e.target.value)}
+            placeholder="https://..."
+            className="w-full px-3 py-3 border border-gray-300 rounded-md text-base focus:outline-none focus:ring-2 focus:ring-jobvelina-blue focus:border-transparent transition-all"
+          />
+        </div>
 
-      <div className="form-group">
-        <label htmlFor="notes">Notes (optional)</label>
-        <textarea
-          id="notes"
-          value={notes}
-          onChange={(e) => setNotes(e.target.value)}
-          placeholder="Any additional notes about this position..."
-          rows={3}
-        />
-      </div>
+        <div>
+          <label className="block text-sm font-semibold text-gray-600 mb-2">
+            Notes (optional)
+          </label>
+          <textarea
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+            placeholder="Any additional notes about this job..."
+            rows={4}
+            className="w-full px-3 py-3 border border-gray-300 rounded-md text-base focus:outline-none focus:ring-2 focus:ring-jobvelina-blue focus:border-transparent transition-all resize-y"
+          />
+        </div>
 
-      <button type="submit" className="submit-btn">
-        Add Job Application 🐗
-      </button>
-    </form>
+        <button
+          type="submit"
+          className="w-full bg-jobvelina-blue hover:bg-jobvelina-blue-hover text-white font-medium py-3 px-6 rounded-md text-base transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-jobvelina-blue focus:ring-offset-2"
+        >
+          Add Job Application
+        </button>
+      </form>
+    </div>
   );
 }
