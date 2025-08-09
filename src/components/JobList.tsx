@@ -41,7 +41,7 @@ function JobDisplayCard({ job, onEdit, onDelete }: {
       
       <div className="flex gap-6 mb-4 flex-wrap text-sm">
         <span className="text-gray-600">Status: {job.status}</span>
-        <span className="text-gray-600">Applied: {job.appliedDate.toLocaleDateString()}</span>
+        <span className="text-gray-600">Applied: {job.applicationDate.toLocaleDateString()}</span>
       </div>
       
       {job.notes && (

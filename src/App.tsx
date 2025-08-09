@@ -1,18 +1,27 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { JobForm } from './components/JobForm';
 import { JobList } from './components/JobList';
 import type { Job, NewJob } from './types/Job';
+import { getAllJobs } from './services/jobService';
 
 function App() {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [editingJobId, setEditingJobId] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    getAllJobs()
+      .then(setJobs)
+      .catch(console.error)
+      .finally(() => setLoading(false));
+  }, []);
 
   const handleAddJob = (newJob: NewJob) => {
     const job: Job = {
       ...newJob,
       id: crypto.randomUUID(),
       status: 'applied',
-      appliedDate: new Date(),
+      applicationDate: new Date(),
     };
 
     setJobs(prevJobs => [...prevJobs, job]);
@@ -28,8 +37,8 @@ function App() {
   };
 
   const handleSaveJob = (updatedJob: Job) => {
-    setJobs(prevJobs => 
-      prevJobs.map(job => 
+    setJobs(prevJobs =>
+      prevJobs.map(job =>
         job.id === updatedJob.id ? updatedJob : job
       )
     );
@@ -61,14 +70,17 @@ function App() {
             <p className="text-lg">Total Applications: {jobs.length}</p>
           </div>
 
-          <JobList 
-            jobs={jobs} 
-            onDeleteJob={handleDeleteJob}
-            editingJobId={editingJobId}
-            onEditJob={handleEditJob}
-            onSaveJob={handleSaveJob}
-            onCancelEdit={handleCancelEdit}
-          />
+          {loading ? (
+            <p>Loading jobs...</p>
+          ) : (
+            <JobList
+              jobs={jobs}
+              onDeleteJob={handleDeleteJob} 
+              editingJobId={editingJobId}
+              onEditJob={handleEditJob}
+              onSaveJob={handleSaveJob}
+              onCancelEdit={handleCancelEdit}
+            />)}
         </main>
       </div>
     </div>

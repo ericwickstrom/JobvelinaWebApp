@@ -5,7 +5,7 @@ export interface Job {
   company: string;
   position: string;
   status: JobStatus;
-  appliedDate: Date;
+  applicationDate: Date;
   notes?: string;
   jobUrl?: string;
 }
