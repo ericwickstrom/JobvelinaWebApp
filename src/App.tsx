@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { JobForm } from './components/JobForm';
 import { JobList } from './components/JobList';
 import type { Job, NewJob } from './types/Job';
-import { getAllJobs } from './services/jobService';
+import { getAllJobs, createJob } from './services/jobService';
 
 function App() {
   const [jobs, setJobs] = useState<Job[]>([]);
@@ -16,16 +16,14 @@ function App() {
       .finally(() => setLoading(false));
   }, []);
 
-  const handleAddJob = (newJob: NewJob) => {
-    const job: Job = {
-      ...newJob,
-      id: crypto.randomUUID(),
-      status: 'applied',
-      applicationDate: new Date(),
-    };
-
-    setJobs(prevJobs => [...prevJobs, job]);
-    console.log('New job added:', job);
+  const handleAddJob = async (newJob: NewJob) => {
+    try {
+      const createdJob = await createJob(newJob);
+      setJobs(prevJobs => [...prevJobs, createdJob]);
+      console.log('New job added:', createdJob);
+    } catch (error) {
+      console.error('Error creating job:', error);
+    }
   };
 
   const handleDeleteJob = (jobId: string) => {
@@ -75,7 +73,7 @@ function App() {
           ) : (
             <JobList
               jobs={jobs}
-              onDeleteJob={handleDeleteJob} 
+              onDeleteJob={handleDeleteJob}
               editingJobId={editingJobId}
               onEditJob={handleEditJob}
               onSaveJob={handleSaveJob}

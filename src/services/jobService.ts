@@ -1,4 +1,4 @@
-import type { Job, JobStatus } from '../types/Job';
+import type { Job, JobStatus, NewJob } from '../types/Job';
 
 const API_BASE_URL = 'http://localhost:5072/api';
 
@@ -36,6 +36,17 @@ const mapStatus = (apiStatus: any): JobStatus => {
     }
 };
 
+const statusToEnum = (status: JobStatus): number => {
+    switch (status) {
+        case 'applied': return 1;
+        case 'interview': return 2;
+        case 'offer': return 3;
+        case 'rejected': return 4;
+        case 'withdrawn': return 5;
+        default: return 1;
+    }
+};
+
 export const getAllJobs = async (): Promise<Job[]> => {
     const response = await fetch(`${API_BASE_URL}/jobs`);
     if (!response.ok) throw new Error('Failed to fetch jobs');
@@ -50,4 +61,69 @@ export const getAllJobs = async (): Promise<Job[]> => {
         notes: job.description,
         jobUrl: job.jobPostingUrl
     }));
+};
+
+export const createJob = async (newJob: NewJob): Promise<Job> => {
+    const response = await fetch(`${API_BASE_URL}/jobs`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            company: newJob.company,
+            position: newJob.position,
+            status: statusToEnum('applied'),
+            applicationDate: new Date().toISOString(),
+            description: newJob.notes,
+            jobPostingUrl: newJob.jobUrl
+        })
+    });
+
+    if (!response.ok) throw new Error('Failed to create job');
+    const apiJob: ApiJob = await response.json();
+
+    return {
+        id: apiJob.id,
+        company: apiJob.company,
+        position: apiJob.position,
+        status: mapStatus(apiJob.status),
+        applicationDate: new Date(apiJob.applicationDate),
+        notes: apiJob.description,
+        jobUrl: apiJob.jobPostingUrl
+    };
+};
+
+export const updateJob = async (job: Job): Promise<Job> => {
+    const response = await fetch(`${API_BASE_URL}/jobs/${job.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            id: job.id,
+            company: job.company,
+            position: job.position,
+            status: job.status.charAt(0).toUpperCase() + job.status.slice(1), // Capitalize for API
+            applicationDate: job.applicationDate.toISOString(),
+            description: job.notes,
+            jobPostingUrl: job.jobUrl
+        })
+    });
+
+    if (!response.ok) throw new Error('Failed to update job');
+    const apiJob: ApiJob = await response.json();
+
+    return {
+        id: apiJob.id,
+        company: apiJob.company,
+        position: apiJob.position,
+        status: mapStatus(apiJob.status),
+        applicationDate: new Date(apiJob.applicationDate),
+        notes: apiJob.description,
+        jobUrl: apiJob.jobPostingUrl
+    };
+};
+
+export const deleteJob = async (id: string): Promise<void> => {
+    const response = await fetch(`${API_BASE_URL}/jobs/${id}`, {
+        method: 'DELETE'
+    });
+
+    if (!response.ok) throw new Error('Failed to delete job');
 };
