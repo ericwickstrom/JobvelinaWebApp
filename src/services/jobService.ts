@@ -99,7 +99,7 @@ export const updateJob = async (job: Job): Promise<Job> => {
             id: job.id,
             company: job.company,
             position: job.position,
-            status: job.status.charAt(0).toUpperCase() + job.status.slice(1), // Capitalize for API
+            status: statusToEnum(job.status),
             applicationDate: job.applicationDate.toISOString(),
             description: job.notes,
             jobPostingUrl: job.jobUrl

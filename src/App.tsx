@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { JobForm } from './components/JobForm';
 import { JobList } from './components/JobList';
 import type { Job, NewJob } from './types/Job';
-import { getAllJobs, createJob } from './services/jobService';
+import { getAllJobs, createJob, updateJob, deleteJob } from './services/jobService';
 
 function App() {
   const [jobs, setJobs] = useState<Job[]>([]);
@@ -26,22 +26,35 @@ function App() {
     }
   };
 
-  const handleDeleteJob = (jobId: string) => {
-    setJobs(prevJobs => prevJobs.filter(job => job.id !== jobId));
+  const handleDeleteJob = async (jobId: string) => {
+    try {
+      await deleteJob(jobId);
+      setJobs(prevJobs => prevJobs.filter(job => job.id !== jobId));
+    }
+    catch (error) {
+      console.error('Error deleting job:', error);
+    }
   };
 
   const handleEditJob = (jobId: string) => {
     setEditingJobId(jobId);
   };
 
-  const handleSaveJob = (updatedJob: Job) => {
-    setJobs(prevJobs =>
-      prevJobs.map(job =>
-        job.id === updatedJob.id ? updatedJob : job
-      )
-    );
-    setEditingJobId(null);
+  const handleSaveJob = async (updatedJob: Job) => {
+    try {
+      const savedJob = await updateJob(updatedJob);
+      setJobs(prevJobs =>
+        prevJobs.map(job =>
+          job.id === savedJob.id ? savedJob : job
+        )
+      );
+      setEditingJobId(null);
+    } catch (error) {
+      console.error('Error updating job:', error);
+    }
   };
+
+
 
   const handleCancelEdit = () => {
     setEditingJobId(null);
