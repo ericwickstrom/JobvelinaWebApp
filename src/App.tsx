@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { JobForm } from './components/JobForm';
 import { JobList } from './components/JobList';
+import { Toast } from './components/Toast';
 import type { Job, NewJob } from './types/Job';
 import { getAllJobs, createJob, updateJob, deleteJob } from './services/jobService';
 
@@ -8,21 +9,39 @@ function App() {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [editingJobId, setEditingJobId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [toast, setToast] = useState<{message: string, type: 'success' | 'error'} | null>(null);
 
+  const showToast = (message: string, type: 'success' | 'error') => {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 3000); // Auto-hide after 3 seconds
+  };
+
+  // Load jobs on component mount
   useEffect(() => {
-    getAllJobs()
-      .then(setJobs)
-      .catch(console.error)
-      .finally(() => setLoading(false));
+    const loadJobs = async () => {
+      try {
+        const apiJobs = await getAllJobs();
+        setJobs(apiJobs);
+      } catch (error) {
+        console.error('Error loading jobs:', error);
+        showToast('Failed to load job applications', 'error');
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    loadJobs();
   }, []);
 
   const handleAddJob = async (newJob: NewJob) => {
     try {
       const createdJob = await createJob(newJob);
       setJobs(prevJobs => [...prevJobs, createdJob]);
+      showToast('Job application added successfully!', 'success');
       console.log('New job added:', createdJob);
     } catch (error) {
       console.error('Error creating job:', error);
+      showToast('Failed to add job application', 'error');
     }
   };
 
@@ -30,9 +49,10 @@ function App() {
     try {
       await deleteJob(jobId);
       setJobs(prevJobs => prevJobs.filter(job => job.id !== jobId));
-    }
-    catch (error) {
+      showToast('Job application deleted successfully!', 'success');
+    } catch (error) {
       console.error('Error deleting job:', error);
+      showToast('Failed to delete job application', 'error');
     }
   };
 
@@ -43,22 +63,35 @@ function App() {
   const handleSaveJob = async (updatedJob: Job) => {
     try {
       const savedJob = await updateJob(updatedJob);
-      setJobs(prevJobs =>
-        prevJobs.map(job =>
+      setJobs(prevJobs => 
+        prevJobs.map(job => 
           job.id === savedJob.id ? savedJob : job
         )
       );
       setEditingJobId(null);
+      showToast('Job application updated successfully!', 'success');
     } catch (error) {
       console.error('Error updating job:', error);
+      showToast('Failed to update job application', 'error');
     }
   };
-
-
 
   const handleCancelEdit = () => {
     setEditingJobId(null);
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-white flex justify-center items-center">
+        <div className="text-center">
+          <h1 className="text-5xl font-bold leading-tight text-jobvelina-blue mb-4">
+            JobVelina 🐗
+          </h1>
+          <p className="text-xl text-gray-500">Loading your job applications...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-white flex justify-center items-start pt-8">
@@ -81,19 +114,25 @@ function App() {
             <p className="text-lg">Total Applications: {jobs.length}</p>
           </div>
 
-          {loading ? (
-            <p>Loading jobs...</p>
-          ) : (
-            <JobList
-              jobs={jobs}
-              onDeleteJob={handleDeleteJob}
-              editingJobId={editingJobId}
-              onEditJob={handleEditJob}
-              onSaveJob={handleSaveJob}
-              onCancelEdit={handleCancelEdit}
-            />)}
+          <JobList 
+            jobs={jobs} 
+            onDeleteJob={handleDeleteJob}
+            editingJobId={editingJobId}
+            onEditJob={handleEditJob}
+            onSaveJob={handleSaveJob}
+            onCancelEdit={handleCancelEdit}
+          />
         </main>
       </div>
+
+      {/* Toast Notification */}
+      {toast && (
+        <Toast 
+          message={toast.message} 
+          type={toast.type} 
+          onClose={() => setToast(null)} 
+        />
+      )}
     </div>
   );
 }
